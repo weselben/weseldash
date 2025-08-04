@@ -1,0 +1,58 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: weseldash-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./data:/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    depends_on:
+      - imgproxy
+    networks:
+      - weseldash-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: weseldash-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    env_file:
+      - .env
+    depends_on:
+      - backend
+    networks:
+      - weseldash-network
+
+  imgproxy:
+    image: darthsim/imgproxy:latest
+    container_name: weseldash-imgproxy
+    ports:
+      - "8080:8080"
+    environment:
+      - IMGPROXY_BIND=:8080
+      - IMGPROXY_LOG_LEVEL=info
+    env_file:
+      - .env
+    networks:
+      - weseldash-network
+
+networks:
+  weseldash-network:
+    driver: bridge
+
+volumes:
+  data:

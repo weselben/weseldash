@@ -1,0 +1,139 @@
+.cursorrules - Project Constitution for the Personal Dashboard
+Version: 1.2
+Last Updated: 2025-08-04
+
+1. Project Goal & Philosophy
+The primary objective is to create a fully personalized, self-hosted hub that integrates all aspects of the user's digital life. The core philosophy is "de-corporation" and data ownership, empowering the user to manage their data, knowledge, and daily activities from a single, private, and powerful interface. The system is designed to be a Progressive Web App (PWA) for easy access.
+
+2. Core Principles (Agent Directives)
+These are non-negotiable rules for any agent contributing to the project.
+
+Rule 2.1: Strict Service Separation. The project uses a microservices-style architecture. The backend (Python/FastAPI) and frontend (Node/Vue) MUST remain as separate services communicating only via REST API.
+
+Rule 2.2: Modularity First. Every feature MUST be implemented in a modular fashion. Think of features as "plugins" that can be enabled, disabled, or configured independently.
+
+Rule 2.3: Adherence to Tech Stack. Strictly follow the technologies defined in Section 3. Do not introduce alternative services or libraries without explicit approval and an update to this file.
+
+Rule 2.4: Configuration over Hardcoding. API keys, endpoints, user preferences, and other variables MUST be managed via configuration files (e.g., .env) and not hardcoded into the application logic.
+
+Rule 2.5: Privacy is Paramount. No data should be sent to third-party services unless explicitly configured by the user for a specific feature.
+
+Rule 2.6: Docker-Centric Workflow. All development, testing, and execution MUST be done via Docker Compose. The application is defined by the collection of containerized services.
+
+Rule 2.7: Progress Tracking. The agent MUST track development progress by updating the task checkboxes in this document or using a designated "todo mcp server".
+
+3. Technical Architecture & Stack
+The application is orchestrated using Docker Compose.
+
+Service 1: Backend API (backend)
+
+Framework: Python 3.10+ with FastAPI.
+
+Purpose: Handles all business logic, data storage, and proxying to external APIs.
+
+Service 2: Frontend App (frontend)
+
+Framework: Vue 3 with Node.js/npm for the build environment.
+
+Purpose: Provides the complete user interface. It is a Single Page Application (SPA) that will be configured as a Progressive Web App (PWA).
+
+Service 3: Image Proxy (imgproxy)
+
+Software: imgproxy (Open Source).
+
+Purpose: On-the-fly image resizing, compression, and transformation. The frontend will request images via imgproxy URLs.
+
+Data Storage:
+
+Structured Data: SQLite for tasks, logs, and configurations.
+
+Wiki/Search Data: A file-based Vector Database (e.g., ChromaDB) for semantic search.
+
+Page Snapshots: Stored as HTML files on the backend's file system.
+
+Execution Environment: CPython for the backend, Node.js for the frontend build.
+
+4. Feature Roadmap
+4.1. Core System & Deployment
+[ ] Create docker-compose.yml to orchestrate the backend, frontend, and imgproxy services.
+
+[ ] Create a multi-stage Dockerfile for the FastAPI backend.
+
+[ ] Create a multi-stage Dockerfile for the Vue.js frontend, including the build step.
+
+[ ] Configure the frontend as a basic PWA.
+
+[ ] Implement a unified configuration system (.env) for all services.
+
+4.2. AI Chat Module
+[ ] Chat interface in the Vue frontend.
+
+[ ] Backend endpoint to proxy requests to an AI model with primary/fallback logic (Gemini -> OpenRouter).
+
+[ ] Grant the AI chat the ability to query other modules via dedicated API functions (e.g., search_wiki(query), get_server_stats()).
+
+4.3. Knowledge Management Module
+[ ] Full-featured RSS Feed Reader: A dedicated page for subscribing to, managing, and reading RSS feeds.
+
+[ ] Personal Wiki / Digital Garden:
+
+A note-taking system where notes can be linked together.
+
+On save, automatically generate vector embeddings for each note and store them in the vector database.
+
+Implement a semantic search bar that finds notes based on meaning, not just keywords.
+
+[ ] Wayback Bookmark Manager:
+
+An interface to save URLs.
+
+On save, the backend fetches the full HTML of the page and stores it as a timestamped snapshot.
+
+Track changes over time and allow viewing of historical versions of a saved page.
+
+4.4. Personal Analytics & Wellness Module
+[ ] Automated AI Journaling:
+
+A daily scheduled task on the backend.
+
+Gathers data points from other modules (e.g., completed tasks, logged media, wiki entries).
+
+Uses small AI calls to summarize each activity cluster.
+
+Uses a final, larger AI call to synthesize summaries into a cohesive daily report.
+
+Stores and displays these reports in a "Daily Review" section.
+
+[ ] Media Consumption Log:
+
+Initial: A manual interface to log books, movies, music.
+
+Future Goal: Automatic logging via integrations (e.g., Spotify, Trakt.tv APIs).
+
+[ ] Habit Tracker: A simple, visual interface for tracking daily/weekly habits.
+
+4.5. System & Home Management Module
+[ ] System Stats Monitor:
+
+A widget displaying stats for the host server (CPU, RAM, Disk).
+
+A secure endpoint to receive data from a remote client.
+
+Future Goal: Develop a lightweight client application for a home PC to send its stats.
+
+[ ] Subscription Tracker: A tool to manually log recurring expenses and their renewal dates.
+
+[ ] Home Inventory: A simple database to catalog personal items, with fields for purchase date, warranty, and photos (processed via imgproxy).
+
+5. Future Ideas & Extensions (Parking Lot)
+This section is for ideas that are not in the current scope but are good candidates for the future.
+
+Full bi-directional calendar sync.
+
+Deeper smart home controls (e.g., Home Assistant integration).
+
+Automatic, dynamic subscription/cost tracking via email parsing or bank API integration.
+
+A module for creating custom data visualizations with a library like D3.js or Chart.js.
+
+Email client integration (IMAP).
