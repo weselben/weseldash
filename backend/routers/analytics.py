@@ -1,0 +1,182 @@
+"""
+Personal Analytics Router
+Handles media logs, habits, and journaling
+"""
+
+from fastapi import APIRouter, HTTPException, Depends
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import datetime
+from sqlalchemy.orm import Session
+from database.database import get_db
+from database.models import MediaLog, Habit, HabitLog, DailyJournal
+
+router = APIRouter()
+
+
+# Pydantic models
+class MediaLogCreate(BaseModel):
+    media_type: str
+    title: str
+    creator: Optional[str] = None
+    status: str = "planned"
+    rating: Optional[float] = None
+    notes: Optional[str] = None
+    started_date: Optional[datetime] = None
+    completed_date: Optional[datetime] = None
+
+
+class HabitCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    frequency: str = "daily"
+    target_count: int = 1
+
+
+class HabitLogCreate(BaseModel):
+    habit_id: int
+    count: int = 1
+    notes: Optional[str] = None
+
+
+# Media Log endpoints
+@router.post("/media-logs")
+async def create_media_log(media_log: MediaLogCreate, db: Session = Depends(get_db)):
+    """Log a new media item"""
+    db_media_log = MediaLog(**media_log.dict(), user_id=1)  # TODO: Get from auth
+    db.add(db_media_log)
+    db.commit()
+    db.refresh(db_media_log)
+    return db_media_log
+
+
+@router.get("/media-logs")
+async def get_media_logs(
+    media_type: Optional[str] = None,
+    status: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """Get media logs with optional filtering"""
+    query = db.query(MediaLog)
+    
+    if media_type:
+        query = query.filter(MediaLog.media_type == media_type)
+    if status:
+        query = query.filter(MediaLog.status == status)
+    
+    media_logs = query.order_by(MediaLog.created_at.desc()).all()
+    return media_logs
+
+
+@router.put("/media-logs/{media_log_id}")
+async def update_media_log(
+    media_log_id: int,
+    media_log_update: MediaLogCreate,
+    db: Session = Depends(get_db)
+):
+    """Update a media log entry"""
+    db_media_log = db.query(MediaLog).filter(MediaLog.id == media_log_id).first()
+    if not db_media_log:
+        raise HTTPException(status_code=404, detail="Media log not found")
+    
+    for field, value in media_log_update.dict().items():
+        setattr(db_media_log, field, value)
+    
+    db.commit()
+    db.refresh(db_media_log)
+    return db_media_log
+
+
+# Habit endpoints
+@router.post("/habits")
+async def create_habit(habit: HabitCreate, db: Session = Depends(get_db)):
+    """Create a new habit"""
+    db_habit = Habit(**habit.dict(), user_id=1)  # TODO: Get from auth
+    db.add(db_habit)
+    db.commit()
+    db.refresh(db_habit)
+    return db_habit
+
+
+@router.get("/habits")
+async def get_habits(active_only: bool = True, db: Session = Depends(get_db)):
+    """Get all habits"""
+    query = db.query(Habit)
+    if active_only:
+        query = query.filter(Habit.is_active == True)
+    
+    habits = query.all()
+    return habits
+
+
+@router.post("/habits/{habit_id}/log")
+async def log_habit_completion(
+    habit_id: int,
+    habit_log: HabitLogCreate,
+    db: Session = Depends(get_db)
+):
+    """Log habit completion"""
+    # Verify habit exists
+    habit = db.query(Habit).filter(Habit.id == habit_id).first()
+    if not habit:
+        raise HTTPException(status_code=404, detail="Habit not found")
+    
+    db_habit_log = HabitLog(**habit_log.dict())
+    db.add(db_habit_log)
+    db.commit()
+    db.refresh(db_habit_log)
+    return db_habit_log
+
+
+@router.get("/habits/{habit_id}/logs")
+async def get_habit_logs(habit_id: int, db: Session = Depends(get_db)):
+    """Get logs for a specific habit"""
+    logs = db.query(HabitLog).filter(HabitLog.habit_id == habit_id).order_by(
+        HabitLog.completed_at.desc()
+    ).all()
+    return logs
+
+
+# Journal endpoints
+@router.get("/journals")
+async def get_daily_journals(db: Session = Depends(get_db)):
+    """Get daily journal entries"""
+    journals = db.query(DailyJournal).order_by(DailyJournal.date.desc()).limit(30).all()
+    return journals
+
+
+@router.get("/journals/{date}")
+async def get_journal_by_date(date: str, db: Session = Depends(get_db)):
+    """Get journal entry for a specific date"""
+    try:
+        journal_date = datetime.fromisoformat(date)
+        journal = db.query(DailyJournal).filter(DailyJournal.date == journal_date).first()
+        if not journal:
+            raise HTTPException(status_code=404, detail="Journal entry not found")
+        return journal
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid date format")
+
+
+@router.post("/journals/generate")
+async def generate_daily_journal(date: Optional[str] = None, db: Session = Depends(get_db)):
+    """Generate AI journal entry for a date"""
+    # This would implement the AI journaling logic
+    # For now, return placeholder
+    target_date = datetime.fromisoformat(date) if date else datetime.now()
+    
+    # TODO: Implement AI journal generation
+    placeholder_content = f"Daily journal for {target_date.date()}: Generated by AI based on daily activities."
+    
+    journal = DailyJournal(
+        date=target_date,
+        content=placeholder_content,
+        mood_score=7.5,
+        activity_summary="Activities tracked and summarized.",
+        user_id=1  # TODO: Get from auth
+    )
+    
+    db.add(journal)
+    db.commit()
+    db.refresh(journal)
+    return journal
