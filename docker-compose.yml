@@ -1,4 +1,21 @@
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: weseldash-postgres
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - weseldash-network
+
   backend:
     build:
       context: ./backend
@@ -14,6 +31,7 @@ services:
     env_file:
       - .env
     depends_on:
+      - postgres
       - imgproxy
     networks:
       - weseldash-network
@@ -56,3 +74,4 @@ networks:
 
 volumes:
   data:
+  postgres_data:

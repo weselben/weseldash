@@ -45,7 +45,7 @@ Purpose: On-the-fly image resizing, compression, and transformation. The fronten
 
 Data Storage:
 
-Structured Data: SQLite for tasks, logs, and configurations.
+Structured Data: PostgreSQL for tasks, logs, and configurations with extensibility via addons.
 
 Wiki/Search Data: A file-based Vector Database (e.g., ChromaDB) for semantic search.
 
