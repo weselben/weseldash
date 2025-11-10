@@ -1,0 +1,367 @@
+#      ____             ___          __  _ ______      __
+#     / __ \_________  /   |  ____  / /_(_)_  __/___ _/ /_
+#    / /_/ / ___/ __ \/ /| | / __ \/ __/ / / / / __ `/ __ \
+#   / ____/ /  / /_/ / ___ |/ / / / /_/ / / / / /_/ / /_/ /
+#  /_/   /_/   \____/_/  |_/_/ /_/\__/_/ /_/  \__,_/_.___/
+#  config.yml (Proxy version)
+
+# This section doesn't really need to be changed,
+# but a few people seem not to like my design for a custom update-notification message...
+# Well... that's basically the whole reason for this one here. xd
+updater:
+  enabled: true
+  period: 10000
+
+  announce-missing-parts: true
+
+  # (!) Warning:
+  #  Activating this will automatically update the config.yml in case something's missing.
+  #  This will most likely cause the config.yml to look weird, considering that all comments,
+  #  as well as spaces will be missing. Please take this in consideration.
+  auto-update-config: false
+
+  updated:
+    - '&8[&24MC &7| &2Proxy&8] &aYou are using the newest version! ^^'
+  outdated:
+    - '&8[&44MC &7| &4Proxy&8] &cThere is a new version available! (%newest_version%)'
+    - '&8[&44MC &7| &4Proxy&8] &cYou are still using the %current_version%.'
+    - '&8[&44MC &7| &4Proxy&8] &cGet the newest version here:'
+    - '&8[&44MC &7| &4Proxy&8] &ehttps://4mc.ch'
+
+# If this value is set to 'true', the proxy won't communicate with the backend servers anymore.
+# In other words, the backend servers won't receive any updates from the proxy about the storage.yml.
+# It's here to prevent any unnecessary communication between the proxy and the backend servers, if 4MC is being used on the proxy alone.
+# It is NOT recommended to enable this option, unless you know what you are doing.
+disable-sync: false
+
+# This is a very necessary feature if you have way too many commands to block and instead decide
+# to whitelist specific commands.
+# Enabling this will disable ALL commands except for those that are in the (group-)list.
+turn-blacklist-to-whitelist: true
+
+# This decides whether 4MC ignores or detects whether a command is written in upper/-lower cased letters.
+# Here are a few examples if this option is enabled:
+# Example with allowing the command "HelP"
+#   /help --> Blocked
+#   /Help --> Blocked
+#   /HelP --> Allowed
+base-command-case-sensitive: true
+
+# Here you can customize the server version that is displayed on a ping. (The text at the player-count)
+custom-protocol-ping:
+  enabled: false
+
+  # Normally it would only display when someone pings the server with the wrong version.
+  # Enabling this will always display the protocol and replace it with the normal player count.
+  always-show: false
+
+  # This number here determines the outcome for the %online_extended% placeholder.
+  # It's the current amount of players increased by this number.
+  # For example: 5/20 becomes 6/20
+  extend-online-count: 1
+  # true: Use new calculated online-count (%online_extended%) as max-players count.
+  # false: Use the default max-players count.
+  use-as-maxplayers: false
+
+  # Enabling this option hides the list of players on your server,
+  # when you hover over the player count.
+  hide-players: false
+
+  # The displayed protocol message
+  # Available placeholders:
+  # %online%            - current online player count
+  # %online_extended%   - manipulated online player count
+  # %max%               - max player count
+  protocol: '&f&l4mc.ch &7(&a%online%&7/&c%max%&7)'
+
+  # The displayed message when you hover over the player count.
+  custom-playerlist:
+    enabled: false
+
+    # Available placeholders:
+    # %online%            - current online player count
+    # %max%               - max player count
+    list:
+        - '&8> &7Online players: &a%online%&7/&2%max%'
+        - '&8> &7Using &f4mc.ch'
+
+# This feature allows you to create your own 'Unknown command.' message.
+# It is very helpful considering the fact you might have to set the same message
+# for if a command is blocked or really doesn't exist. ^^
+# Good to hide real and not-real commands from your players.
+# (!) Warning: This feature only works if 4MC is installed on the backend server as well.
+custom-unknown-command:
+  enabled: false
+  message:
+    - '&cThis command does not exist!'
+
+# This setting decides if a listed command should be cancelled from execution or not.
+# As you can see it's enabled by default, which is also why every command that is listed
+# is being blocked entirely.
+cancel-blocked-commands:
+  enabled: true
+  base-command-message:
+    - '%prefix% &cThis command &8(&4%command%&8) &cis blocked!'
+  sub-command-message:
+    - '%prefix% &cCommand &8(&4%command%&8) &cwith the provided sub-argument is not allowed!'
+
+# Here you can customize your own fake '/plugins' command.
+custom-plugins:
+  enabled: true
+
+  # If this is set to true, the command will always be tab-completable,
+  # even if the command is supposed to be blocked
+  always-tab-completable: true
+
+  commands:
+    - pl
+    - plugins
+  message:
+    - '&fPlugins (0):'
+
+# Here you can customize your own fake '/version' command.
+custom-version:
+  enabled: true
+
+  # If this is set to true, the command will always be tab-completable,
+  # even if the command is supposed to be blocked
+  always-tab-completable: false
+
+  commands:
+    - icanhasbukkit
+    - about
+    - version
+    - ver
+  message:
+    - '&fThis server is running 4mc.ch Custom PaperMC Build!'
+
+# Here you can disable all namespace commands.
+# Namespace commands are commands like plugin:command (e.g: essentials:warp)
+# You can bypass this restriction with the 4mc.namespace permission.
+block-namespace-commands:
+  enabled: false
+
+# Patches a small exploit which causes the server to lag.
+# Due to the fact that 4MC interacts directly with Tab-Completions and their packets,
+# it would be a waste not to provide some simple patches like these. ^^
+patch-exploits:
+  enabled: true
+  alert-message: '%prefix% &4%player% &ctried to crash/lag the server.'
+  kick-message: '&cFailed to read packet! Please reconnect.'
+
+# This feature allows you to customize your server brand you see when you press F3.
+# Normally there is something like 'Purpur', or 'Spigot'.
+# With this feature, you are able to change and even animate it.
+custom-server-brand:
+  enabled: true
+
+  # Determines the speed at which the animation goes.
+  # Set this to -1 to disable the animation.
+  # Disabling the animation will only display
+  # the first brand of this list.
+  # Warning:
+  # By disabling the animation, you also disable the
+  # automatic update of information.
+  # That means that placeholders won't update unless the
+  # player rejoins or switches to another server.
+  repeat-delay: 150
+
+  # This is the list of the animation
+  # Possible placeholders:
+  # %player%        - name of the player
+  # %server%        - name of the server where the player is currently
+  # %ping%          - ping of the player
+  # and the other placeholders from PlaceholderAPI.
+  brands:
+    - '&f&l4&fmc.ch |'
+    - '&f4&lm&fc.ch /'
+    - '&f4m&lc&f.ch -'
+    - '&f4mc&l.&fch |'
+    - '&f4mc.&lc&fh \'
+    - '&f4mc.c&lh&f |'
+    - '&f4mc.ch /'
+    - '&f4mc.ch -'
+    - '&f4mc.ch \'
+    - '&f4mc.ch |'
+
+# ------------------------------------------------------------------------------
+#       __  ___
+#      /  |/  /__  ______________ _____ ____  _____
+#     / /|_/ / _ \/ ___/ ___/ __ `/ __ `/ _ \/ ___/
+#    / /  / /  __(__  |__  ) /_/ / /_/ /  __(__  )
+#   /_/  /_/\___/____/____/\__,_/\__, /\___/____/
+#                               /____/
+# Here are all the remaining messages for the InGame commands.
+# Have fun editing them to your liking! ^^
+# Remember: PlaceholderAPI & MiniMessage works on all these messages! ^^
+# Here are a few other placeholders that can be used in any message here:
+# %prefix%            - the plugin prefix
+# %executor%          - the name of the executor (command specified)
+# %newest_version%    - the version name of the latest plugin update
+# %current_version%   - the version name of the plugin that is installed right now
+
+prefix: '&8[&44mc.ch&8]'
+no-permissions: '&cYou are not allowed to execute this command! Missing permission: &4%permission%'
+command-failed: '&cFailed to execute this command! Use "/b4mc" to see all available commands.'
+
+update-permissions:
+  all-players: '&aUpdated permissions!'
+  specific-player: '&aUpdated %target%''s permissions!'
+  player-not-online: '&c%target% is not online!'
+
+post-debug:
+  success: '&aSuccessfully uploaded debug logs: &e%link% &8(<click:open_url:%link%><gray>CLICK</click>&8)'
+  failed: '&cFailed to upload debug logs!'
+
+notification:
+  enabled: '&aEnabled notifications'
+  disabled: '&cDisabled notifications'
+  alert:
+    - '&8[&4ALERT&8] &c%player% &8(&7server: &e%server%&8) &ctried to execute the following blocked command: &4%command%'
+
+reload:
+  loading: '&eReloading all configuration files...'
+  done: '&aSuccessfully reloaded all configuration files!'
+
+perms-check:
+  message: "&7All of &e%player%'s &74MC-related permission: &e%permissions%"
+  player-is-missing: "&cPlease specify the player whose permission you want to check."
+  player-not-online: "&c%player% is not online!"
+
+help:
+  - '&7Available commands are: &f/%label%&7... &8[&fPROXY&8]'
+  - '&7Format: &8<optional> (required)'
+  - '&f  reload &7to reload the plugin'
+  - '&f  notify &7to get alerted'
+  - '&f  info &7to get a few information'
+  - '&f  postdebug &7to post the 4MC logs'
+  - '&f  update <player> &7to update player(s) permissions'
+  - "&f  perms <player> &7to check a player's permissions"
+  - '&f  add/rem (command) &8<group> &7to manage the list'
+  - '&f  clear &8<group> &7to clear the list'
+  - '&f  creategroup (group) &7to create a group'
+  - '&f  deletegroup (group) &7to delete a group'
+  - '&f  setpriority (group) (priority) &7to set the priority'
+  - '&f  list &8<group> &7to see all listed commands'
+  - '&f  listgroups &8<server> &7List all groups'
+  - '&f  listpriorities &7to list all group priorities'
+  - '&7 For a specific server:'
+  - '&f  serv list (server) &8<group>'
+  - '&f  serv add/rem (server) (command) &8<group> '
+  - '&f  serv clear (server) &8<group>'
+
+info:
+  version:
+    updated: '&aUpdated'
+    outdated: '&cOutdated (%newest_version%)'
+
+  proxy-sync:
+    time: '&e%time%'
+    disabled: '&cDisabled!'
+
+  message:
+    - '&7Necessary information about &f4mc.ch&8:'
+    - '&7  Version: &e%current_version%'
+    - '&7  Status: %version_status%'
+    - '&7  Last sync: %sync_time%'
+    - '&7  Proxy sync-token: &e%token%'
+
+stats:
+  fail: '&cThis command works on Bungeecord/Velocity servers only!'
+  no-server: '&cNone!'
+  message:
+    splitter: '&7, '
+    server: '&f%servername% &8(%updated%)'
+    statistic:
+      - '&7Last sync sent to &f%server_count% &7servers. &8&o(%last_sync_time% ago)'
+      - '&7Sent to servers: &f%servers%'
+
+server-list:
+  server-not-found: '&cThe server %server% does not have any commands!'
+  group-does-not-exist: '&cGroup %group% does not exist for %server%!'
+  list:
+    server:
+      message: '&7Listed commands of %server% (&f%size%&7)&8: &f%commands%'
+      splitter: '&7, &f'
+    group:
+      message: '&7Listed commands of %group% from %server% (&f%size%&7)&8: &f%commands%'
+      splitter: '&7, &f'
+
+blacklist:
+  clear: '&aList has been cleared!'
+  clear-server: '&aList has been cleared for the server %server%!'
+  clear-server-not-found: '&cThe server %server% does not have any commands!'
+
+  clear-confirmation: '&4Warning! &7This command will &cclear the entire list&7! &7Repeat the &esame command &7to confirm this action.'
+  clear-confirmation-server: '&4Warning! &7This command will &cclear the entire list of this server&7! &7Repeat the &esame command &7to confirm this action.'
+
+  list:
+    message: '&7Listed commands (&f%size%&7)&8: &f%commands%'
+    splitter: '&7, '
+    command: '&f%command%'
+
+    message-server: '&7Listed commands of %server% (&f%size%&7)&8: &f%commands%'
+    splitter-server: '&7, &f'
+
+  add:
+    success: '&aSuccessfully added %command% to the list!'
+    failed: '&c%command% is already in the list!'
+    success-server: '&aSuccessfully added %command% to the list of %server%!'
+    failed-server: '&c%command% is already in the list of %server%!'
+
+  remove:
+    success: '&aSuccessfully removed %command% from the list!'
+    failed: '&c%command% is not listed!'
+    success-server: '&aSuccessfully removed %command% from the list of %server%!'
+    failed-server: '&c%command% is not in the list of %server%!'
+
+group:
+  create: '&aGroup %group% has been created!'
+  already-exist: '&cGroup %group% already exists!'
+  does-not-exist: '&cGroup %group% does not exist!'
+  delete: '&cGroup %group% has been deleted!'
+  delete-confirmation: '&4Warning! &7This command will &cdelete the group with the entire list&7 of this group! &7Repeat the &esame command &7to confirm this action.'
+
+  clear: '&aList of group %group% has been cleared!'
+  clear-confirmation: '&4Warning! &7This command will &cclear the entire list&7 of this group! &7Repeat the &esame command &7to confirm this action.'
+
+  create-server: '&aGroup %group% for %server% has been created!'
+  already-exist-server: '&cGroup %group% for %server% already exists!'
+  does-not-exist-server: '&cGroup %group% of %server% does not exist!'
+  delete-server: '&cGroup %group% of %server% has been deleted!'
+  delete-confirmation-server: '&4Warning! &7This command will &cdelete the group of the server %server% with the entire list&7 of this group! &7Repeat the &esame command &7to confirm this action.'
+  clear-server: '&aList of group %group% from %server% has been cleared!'
+  clear-confirmation-server: '&4Warning! &7This command will &cclear the entire list&7 of this group for %server%! &7Repeat the &esame command &7to confirm this action.'
+
+  priority:
+    success: '&aSuccessfully set the priority of group &e%group% &ato &e%priority%&a!'
+    failed: '&cInvalid priority! Please choose a number which is greater than 0.'
+
+  list:
+    message: '&7Listed commands of group %group% (&f%size%&7)&8: &f%commands%'
+    splitter: '&7, &f'
+    message-server: '&7Listed commands of group %group% from %server% (&f%size%&7)&8: &f%commands%'
+    splitter-server: '&7, &f'
+
+  list-groups:
+    message: '&7All groups (&f%size%&7)&8: &f%groups%'
+    splitter: '&7, &f'
+    message-server: '&7All groups from %server% (&f%size%&7)&8: &f%groups%'
+    splitter-server: '&7, &f'
+
+  list-priorities:
+    message: '&7List of all group priorities (&f%size%&7)&8: \n&f%groups%'
+    splitter: '\n'
+    group: '&8- &e%priority%&8: &e%group%'
+
+  add:
+    success: '&aSuccessfully added %command% to the list of group %group%!'
+    failed: '&c%command% is already in the list of group %group%!'
+    success-server: '&aSuccessfully added %command% to the list of group %group% for %server%!'
+    failed-server: '&c%command% is already in the list of group %group% of %server%!'
+
+  remove:
+    success: '&aSuccessfully removed %command% from the list of group %group%!'
+    failed: '&c%command% is not listed in the group %group%!'
+    success-server: '&aSuccessfully removed %command% from the list of group %group% from %server%!'
+    failed-server: '&c%command% is not listed in the group %group% of %server%!'
